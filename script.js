@@ -1,54 +1,25 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const calculateBtn = document.getElementById('calculateBtn');
-    const ropesInput = document.getElementById('ropesInput');
-    const resultDiv = document.getElementById('result');
+function mincost(arr) {
+  let cost = 0;
 
-    calculateBtn.addEventListener('click', function() {
-        try {
-            // Parse input and validate
-            const input = ropesInput.value.trim();
-            if (!input) throw new Error('Please enter rope lengths');
-            
-            const ropes = input.split(',').map(item => {
-                const num = parseInt(item.trim());
-                if (isNaN(num) || num < 1) throw new Error('All rope lengths must be positive integers');
-                return num;
-            });
-            
-            if (ropes.length < 1 || ropes.length > 1000) {
-                throw new Error('Number of ropes must be between 1 and 1000');
-            }
-            
-            // Calculate minimum cost
-            const cost = mincost(ropes);
-            resultDiv.textContent = cost;
-        } catch (error) {
-            resultDiv.textContent = `Error: ${error.message}`;
-        }
-    });
+  // Edge case: if only one rope, cost is 0 (no connections)
+  if (arr.length <= 1) return 0;
 
-    function mincost(arr) {
-        // Create a min-heap (priority queue)
-        const heap = [...arr];
-        heap.sort((a, b) => a - b);
-        
-        let totalCost = 0;
-        
-        // While we have more than one rope in the heap
-        while (heap.length > 1) {
-            // Extract the two smallest ropes
-            const first = heap.shift();
-            const second = heap.shift();
-            
-            // Calculate the cost of connecting them
-            const cost = first + second;
-            totalCost += cost;
-            
-            // Insert the new rope back into the heap
-            heap.push(cost);
-            heap.sort((a, b) => a - b);
-        }
-        
-        return totalCost;
-    }
-});
+  // We'll simulate min-heap by sorting arr each time
+  while (arr.length > 1) {
+    arr.sort((a, b) => a - b);  // Sort ascending
+
+    // Take two smallest ropes
+    let first = arr.shift();
+    let second = arr.shift();
+
+    let sum = first + second;
+    cost += sum;
+
+    // Insert the combined rope back into the array
+    arr.push(sum);
+  }
+
+  return cost;
+}
+
+module.exports = mincost;
